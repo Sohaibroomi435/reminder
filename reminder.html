@@ -1,0 +1,306 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Stop Drinking Coke 🐰</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;600&display=swap" rel="stylesheet">
+<style>
+*{margin:0;padding:0;box-sizing:border-box;}
+body{overflow:hidden;height:100vh;background:white;font-family:'Poppins',sans-serif;display:flex;justify-content:center;align-items:center;position:relative;}
+
+#scene1{position:absolute;inset:0;display:flex;flex-direction:column;justify-content:center;align-items:center;transition:0.5s;}
+.coke-can{font-size:10rem;cursor:pointer;animation:float 2s ease-in-out infinite;user-select:none;transition:0.3s;}
+.tap-text{margin-top:20px;color:#ff4d88;font-size:1.5rem;animation:pulse 2s infinite;}
+
+.shake{animation:shake 0.8s;}
+.splash{position:absolute;width:25px;height:25px;background:#5a2a00;border-radius:50%;opacity:0;animation:splashAnim 1.5s forwards;}
+.glass{position:absolute;font-size:4rem;animation:throwGlass 1.8s forwards;}
+
+#scene2{position:absolute;inset:0;display:flex;flex-direction:column;justify-content:center;align-items:center;opacity:0;pointer-events:none;transition:1s;}
+.bunny{font-size:12rem;animation:bunnyJump 1.5s infinite;}
+.message{margin-top:20px;font-size:1.9rem;color:#ff4d88;text-align:center;max-width:700px;line-height:1.6;}
+.milk{font-size:5rem;margin-top:16px;animation:drink 2s infinite;}
+.fat{animation:getFat 2s forwards;}
+.heart{position:absolute;color:pink;font-size:20px;animation:hearts 8s linear infinite;opacity:0.5;}
+
+/* Clock HUD — top left */
+#clockHud{
+  position:fixed;
+  top:18px;
+  left:18px;
+  background:#f0f7ff;
+  border:2px dashed #4d88ff;
+  border-radius:14px;
+  padding:10px 16px;
+  text-align:center;
+  z-index:999;
+  animation:hudPop 0.6s cubic-bezier(0.34,1.56,0.64,1);
+  min-width:130px;
+}
+.clock-time{font-size:1.6rem;font-weight:700;color:#4d88ff;line-height:1.2;}
+.clock-ampm{font-size:0.75rem;color:#5577cc;margin-top:2px;letter-spacing:1px;}
+.sleep-badge{
+  margin-top:6px;
+  background:#ff4d88;
+  color:white;
+  font-size:0.75rem;
+  font-weight:700;
+  border-radius:99px;
+  padding:3px 10px;
+  animation:sleepPulse 1.5s ease-in-out infinite;
+  display:none;
+}
+
+/* Weight HUD — top right */
+#weightHud{
+  position:fixed;
+  top:18px;
+  right:18px;
+  background:#fff0f7;
+  border:2px dashed #ff4d88;
+  border-radius:14px;
+  padding:10px 16px;
+  text-align:center;
+  z-index:999;
+  animation:hudPop 0.6s cubic-bezier(0.34,1.56,0.64,1);
+}
+.hud-title{font-size:0.65rem;letter-spacing:1.5px;color:#cc2255;text-transform:uppercase;font-weight:600;}
+.hud-weight{font-size:2rem;font-weight:700;color:#ff4d88;line-height:1;}
+.hud-target{font-size:0.75rem;color:#cc2255;margin-top:2px;}
+.hud-gap{font-size:0.8rem;font-weight:600;color:#ff8800;margin-top:4px;}
+.hud-bar-bg{width:130px;height:8px;background:#ffd6e8;border-radius:99px;overflow:hidden;margin:6px auto 0;}
+.hud-bar-fill{height:100%;border-radius:99px;background:linear-gradient(90deg,#ff4d88,#ff8c00);width:78.33%;}
+
+/* BOTTOM toast */
+#reminderToast{
+  position:fixed;
+  bottom:-90px;
+  left:50%;
+  transform:translateX(-50%);
+  background:#fff8e1;
+  border:2px solid #ffcc00;
+  border-radius:14px;
+  padding:12px 22px;
+  font-size:1rem;
+  font-weight:600;
+  color:#a05800;
+  white-space:nowrap;
+  z-index:999;
+  transition:bottom 0.5s cubic-bezier(0.34,1.56,0.64,1);
+  text-align:center;
+}
+#reminderToast.show{bottom:24px;}
+
+@keyframes float{0%{transform:translateY(0);}50%{transform:translateY(-15px);}100%{transform:translateY(0);}}
+@keyframes pulse{0%{opacity:0.5;}50%{opacity:1;}100%{opacity:0.5;}}
+@keyframes shake{0%{transform:translate(0);}20%{transform:translate(-20px,10px);}40%{transform:translate(20px,-10px);}60%{transform:translate(-15px,5px);}80%{transform:translate(15px,-5px);}100%{transform:translate(0);}}
+@keyframes splashAnim{0%{transform:scale(0);opacity:1;}100%{transform:translate(calc((var(--x)-0.5)*600px),calc((var(--y)-0.5)*600px)) scale(2);opacity:0;}}
+@keyframes throwGlass{0%{transform:translate(0,0) rotate(0deg);opacity:1;}100%{transform:translate(700px,-300px) rotate(720deg);opacity:0;}}
+@keyframes bunnyJump{0%{transform:translateY(0);}50%{transform:translateY(-20px);}100%{transform:translateY(0);}}
+@keyframes drink{0%{transform:rotate(0deg);}50%{transform:rotate(-15deg);}100%{transform:rotate(0deg);}}
+@keyframes getFat{0%{transform:scale(1);}100%{transform:scale(1.25);}}
+@keyframes hearts{0%{transform:translateY(100vh);opacity:0;}20%{opacity:0.6;}100%{transform:translateY(-120vh);opacity:0;}}
+@keyframes hudPop{0%{transform:scale(0.5);opacity:0;}80%{transform:scale(1.1);}100%{transform:scale(1);opacity:1;}}
+@keyframes nudge{0%,100%{transform:scale(1);}50%{transform:scale(1.08);}}
+@keyframes sleepPulse{0%,100%{opacity:1;transform:scale(1);}50%{opacity:0.7;transform:scale(1.05);}}
+@keyframes sleepNudge{0%,100%{transform:scale(1);}50%{transform:scale(1.06);}}
+
+@media(max-width:768px){
+  .coke-can{font-size:7rem;}
+  .bunny{font-size:8rem;}
+  .message{font-size:1.3rem;padding:20px;}
+  #reminderToast{font-size:0.85rem;white-space:normal;max-width:90vw;text-align:center;}
+  #clockHud{min-width:110px;}
+}
+</style>
+</head>
+<body>
+
+<div id="scene1">
+  <div class="coke-can" onclick="startAnimation()">🥤</div>
+  <div class="tap-text">Tap me if you want Coke 👀</div>
+</div>
+
+<div id="scene2">
+  <div id="bunny" class="bunny">🐰</div>
+  <div class="message">
+    "No more Coke for you 😤<br>
+    Bunny is switching to milk now 🥛"
+  </div>
+  <div class="milk">🥛</div>
+</div>
+
+<!-- Clock HUD top left -->
+<div id="clockHud">
+  <div class="clock-time" id="clockTime">--:--</div>
+  <div class="clock-ampm" id="clockAmPm">--</div>
+  <div class="sleep-badge" id="sleepBadge">😴 Sleep Time!</div>
+</div>
+
+<!-- Weight HUD top right -->
+<div id="weightHud">
+  <div class="hud-title">🐰 bunny weight</div>
+  <div class="hud-weight">47 <span style="font-size:1rem;font-weight:400;">kg</span></div>
+  <div class="hud-target">Target: 60 kg 🎯</div>
+  <div class="hud-gap">⚠️ 13 kg to go!</div>
+  <div class="hud-bar-bg"><div class="hud-bar-fill"></div></div>
+</div>
+
+<!-- Bottom toast -->
+<div id="reminderToast">🥛 Drink milk, 47 kg is not a flex</div>
+
+<script>
+function updateClock(){
+  const now = new Date();
+  const utc = now.getTime() + now.getTimezoneOffset() * 60000;
+  const pkTime = new Date(utc + 5 * 60 * 60000);
+
+  let hours = pkTime.getHours();
+  const minutes = pkTime.getMinutes();
+  const ampm = hours >= 12 ? 'pm' : 'am';
+  const hours12 = hours % 12 || 12;
+  const minStr = minutes.toString().padStart(2, '0');
+
+  document.getElementById('clockTime').textContent = hours12 + ':' + minStr;
+  document.getElementById('clockAmPm').textContent = ampm;
+
+  const isSleepTime = hours >= 22 || hours < 5;
+  const sleepBadge = document.getElementById('sleepBadge');
+  const clockHud = document.getElementById('clockHud');
+  const clockTimeEl = document.getElementById('clockTime');
+  const clockAmPmEl = document.getElementById('clockAmPm');
+
+  if(isSleepTime){
+    sleepBadge.style.display = 'block';
+    clockHud.style.borderColor = '#ff4d88';
+    clockHud.style.background = '#fff0f7';
+    clockTimeEl.style.color = '#ff4d88';
+    clockAmPmEl.style.color = '#cc2255';
+  } else {
+    sleepBadge.style.display = 'none';
+    clockHud.style.borderColor = '#4d88ff';
+    clockHud.style.background = '#f0f7ff';
+    clockTimeEl.style.color = '#4d88ff';
+    clockAmPmEl.style.color = '#5577cc';
+  }
+}
+
+updateClock();
+setInterval(updateClock, 1000);
+
+// Nudge clock during sleep time every 4s
+setInterval(()=>{
+  const now = new Date();
+  const utc = now.getTime() + now.getTimezoneOffset() * 60000;
+  const pkHour = new Date(utc + 5*60*60000).getHours();
+  if(pkHour >= 22 || pkHour < 5){
+    const c = document.getElementById('clockHud');
+    c.style.animation='none';
+    void c.offsetWidth;
+    c.style.animation='sleepNudge 0.4s ease';
+  }
+}, 4000);
+
+// Reminders
+const reminders = [
+  "🍕 Eat well, 47 kg is not a flex",
+  "🧀 Cheese exists. Have some.",
+  "🍕 47 kg is a suitcase, not a person. Eat!",
+  "🥤 Coke is not food. Put the can down!",
+  "🧟‍♀️ You are not a zombie. Go to bed!",
+  "🦷 Coke and cavities: power couple",
+  "🥗 Even Victoria's Secret models eat more!",
+  "🫶 60 kg of you > 47 kg of you",
+  "😏 A little more weight and you'll be dangerously adorable",
+  "🐼 Sleep now, or you will look like a panda tomorrow",
+  "🥤 Soft drinks. Hard consequences.",
+  "⚰️ Sip sip. RIP.",
+];
+
+let reminderIndex = 0;
+const toast = document.getElementById('reminderToast');
+
+function showReminder(){
+  toast.textContent = reminders[reminderIndex % reminders.length];
+  reminderIndex++;
+  toast.classList.add('show');
+  setTimeout(()=>toast.classList.remove('show'), 3500);
+}
+
+setTimeout(()=>{
+  showReminder();
+  setInterval(showReminder, 7000);
+}, 3000);
+
+// Nudge weight HUD every 5s
+setInterval(()=>{
+  const hud = document.getElementById('weightHud');
+  hud.style.animation='none';
+  void hud.offsetWidth;
+  hud.style.animation='nudge 0.4s ease';
+}, 5000);
+
+function startAnimation(){
+  const body = document.body;
+  const scene1 = document.getElementById('scene1');
+  const scene2 = document.getElementById('scene2');
+  const bunny = document.getElementById('bunny');
+
+  body.classList.add('shake');
+  setTimeout(()=>body.classList.remove('shake'), 800);
+
+  for(let i=0;i<25;i++){
+    const splash = document.createElement('div');
+    splash.classList.add('splash');
+    splash.style.left='50%';
+    splash.style.top='50%';
+    splash.style.setProperty('--x', Math.random());
+    splash.style.setProperty('--y', Math.random());
+    body.appendChild(splash);
+    setTimeout(()=>splash.remove(), 1500);
+  }
+
+  const glass = document.createElement('div');
+  glass.classList.add('glass');
+  glass.innerHTML='🥛';
+  glass.style.left='45%';
+  glass.style.top='45%';
+  body.appendChild(glass);
+  setTimeout(()=>glass.remove(), 1800);
+
+  for(let i=0;i<15;i++) setTimeout(createHeart, i*200);
+
+  setTimeout(()=>{
+    scene1.style.opacity='0';
+    setTimeout(()=>scene1.style.display='none', 500);
+    scene2.style.opacity='1';
+    scene2.style.pointerEvents='all';
+    bunny.classList.add('fat');
+  }, 1000);
+
+  setTimeout(()=>{
+    bunny.classList.remove('fat');
+    scene2.style.opacity='0';
+    scene2.style.pointerEvents='none';
+    setTimeout(()=>{
+      scene1.style.display='flex';
+      setTimeout(()=>scene1.style.opacity='1', 50);
+    }, 500);
+  }, 7000);
+}
+
+function createHeart(){
+  const heart = document.createElement('div');
+  heart.classList.add('heart');
+  heart.innerHTML='❤';
+  heart.style.left=Math.random()*100+'vw';
+  heart.style.fontSize=(Math.random()*25+10)+'px';
+  heart.style.animationDuration=(Math.random()*4+4)+'s';
+  document.body.appendChild(heart);
+  setTimeout(()=>heart.remove(), 8000);
+}
+</script>
+</body>
+</html>
